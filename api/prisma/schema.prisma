@@ -1,0 +1,13 @@
+// Models arrive with the data model feature (scope feature 3).
+// Row level security, constraints, extensions, and roles go in handwritten SQL migrations.
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}

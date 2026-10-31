@@ -1,0 +1,51 @@
+# Local services for `pnpm dev`. The web app and API run on the host; Nginx proxies to them.
+# Ports bind to 127.0.0.1 only.
+name: monrdv-dev
+
+x-postgres: &postgres
+  image: postgres:18
+  healthcheck:
+    # Over TCP: during first init Postgres runs a socket only server, which is not ready for the apps yet.
+    test:
+      ['CMD-SHELL', 'pg_isready -h 127.0.0.1 -U postgres -d "$${POSTGRES_DB}"']
+    interval: 2s
+    timeout: 5s
+    retries: 30
+
+x-postgres-env: &postgres-env
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+  APP_MIGRATOR_PASSWORD: ${APP_MIGRATOR_PASSWORD:?set APP_MIGRATOR_PASSWORD in .env}
+  APP_USER_PASSWORD: ${APP_USER_PASSWORD:?set APP_USER_PASSWORD in .env}
+
+services:
+  db:
+    <<: *postgres
+    environment:
+      <<: *postgres-env
+      POSTGRES_DB: booking
+    ports: ['127.0.0.1:5432:5432']
+    volumes:
+      - pgdata:/var/lib/postgresql
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+
+  # Throwaway database for tests: kept in memory, recreated empty on every start.
+  db-test:
+    <<: *postgres
+    environment:
+      <<: *postgres-env
+      POSTGRES_DB: booking_test
+    ports: ['127.0.0.1:5433:5432']
+    tmpfs: /var/lib/postgresql
+    volumes:
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+
+  nginx:
+    image: nginx:stable-alpine
+    ports: ['127.0.0.1:80:80']
+    volumes:
+      - ./nginx/dev.conf:/etc/nginx/conf.d/default.conf:ro
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
+volumes:
+  pgdata:

@@ -1,0 +1,5 @@
+pnpm-lock.yaml
+api/src/generated/
+docs/
+.claude/
+skills-lock.json

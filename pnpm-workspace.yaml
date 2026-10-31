@@ -1,0 +1,12 @@
+packages:
+  - web
+  - api
+  - shared
+
+# pnpm 11 runs no dependency build scripts unless they are listed here.
+allowBuilds:
+  '@prisma/engines': true
+  '@scarf/scarf': false
+  prisma: true
+  sharp: false
+  unrs-resolver: false

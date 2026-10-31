@@ -1,0 +1,9 @@
+{
+  "tool": "vitest",
+  "gate": null,
+  "additionalTools": ["supertest"],
+  "e2eTool": "playwright",
+  "testDir": "beside the source; API HTTP tests in api/test/",
+  "filePattern": "*.test.ts (web, shared) · *.spec.ts (api unit) · *.e2e-spec.ts (api/test)",
+  "packageManager": "pnpm"
+}

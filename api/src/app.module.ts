@@ -2,14 +2,20 @@ import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
 import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { LoggerModule } from 'nestjs-pino';
+import { AuthGuard } from './auth/auth.guard.js';
+import { AuthModule } from './auth/auth.module.js';
 import {
   validateEnv,
   type EnvironmentVariables,
 } from './config/env.validation.js';
 import { HealthModule } from './health/health.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
+import { HostGuard } from './tenancy/host.guard.js';
+import { TenancyModule } from './tenancy/tenancy.module.js';
+import type { TenantRequest } from './tenancy/tenant-request.js';
+import { TenantModule } from './tenant/tenant.module.js';
 
 const REQUEST_ID = /^[\w-]{1,64}$/;
 
@@ -36,6 +42,10 @@ const REQUEST_ID = /^[\w-]{1,64}$/;
             res.setHeader('x-request-id', id);
             return id;
           },
+          // Read again when the response finishes, after HostGuard resolved the business.
+          customProps: (req) => ({
+            business: (req as TenantRequest).business?.subdomain,
+          }),
           redact: [
             'req.headers.cookie',
             'req.headers.authorization',
@@ -45,9 +55,15 @@ const REQUEST_ID = /^[\w-]{1,64}$/;
       }),
     }),
     PrismaModule,
+    TenancyModule,
+    AuthModule,
     HealthModule,
+    TenantModule,
   ],
   providers: [
+    // Guards run in this order: the host decides the business, then the session must match it.
+    { provide: APP_GUARD, useClass: HostGuard },
+    { provide: APP_GUARD, useClass: AuthGuard },
     {
       provide: APP_PIPE,
       useValue: new ValidationPipe({

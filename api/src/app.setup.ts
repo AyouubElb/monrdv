@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import cookieParser from 'cookie-parser';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
@@ -12,6 +13,8 @@ export function configureApp(app: NestExpressApplication): void {
   app.useLogger(app.get(Logger));
   // Nginx (and the web app on the private network) forward the visitor's host and IP.
   app.set('trust proxy', config.get('TRUSTED_PROXY', { infer: true }));
+  // AuthGuard reads the access token from its cookie.
+  app.use(cookieParser());
   app.setGlobalPrefix('api');
   app.enableShutdownHooks();
 

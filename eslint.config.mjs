@@ -46,6 +46,33 @@ export default defineConfig([
     files: ['api/**', 'shared/**', 'scripts/**', '*.{js,mjs,cjs}'],
     languageOptions: { globals: globals.node },
   },
+  // Tenant isolation (spec 0002): services reach business data only through
+  // `TenantDb.forBusiness`, never through the raw Prisma client.
+  {
+    files: ['api/src/**/*.ts'],
+    ignores: ['api/src/prisma/**', 'api/src/tenancy/**', 'api/src/health/**'],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/prisma/prisma.service*'],
+              message:
+                'Use TenantDb.forBusiness (api/src/tenancy) instead of PrismaService.',
+            },
+            {
+              // Types (Prisma.TransactionClient, model types) stay importable.
+              group: ['**/generated/prisma/**'],
+              allowTypeImports: true,
+              message:
+                'Use TenantDb.forBusiness (api/src/tenancy) instead of a Prisma client.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 
   prettier,
 ]);

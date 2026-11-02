@@ -14,7 +14,7 @@ _Steps derived from spec 0001 acceptance criteria. `/check verify` runs these; `
 - [x] `pnpm --filter api exec vitest run test/database-roles.e2e-spec.ts` → app_user is not superuser, `NOBYPASSRLS`, owns nothing, cannot create tables, timeouts `5s`/`10s` → AC-3
 - [x] `pnpm --filter api exec vitest run src/config/tzdata.spec.ts` → Casablanca at `+00:00` on 2026-10-01; `assertTzData('2026a')` throws → AC-4
 - [x] Value sourcing (phone): `pnpm --filter api exec vitest run src/common/validation` and `pnpm --filter web exec vitest run lib/validation` → both pass the same `phoneSamples` from `@repo/shared/testing` → AC-5
-- [ ] `pnpm turbo run lint typecheck test build` → all tasks pass; push to GitHub → the `CI` workflow runs the same checks against a Postgres 18 service and goes green; break a test → the run fails → AC-6
+- [x] `pnpm turbo run lint typecheck test build` → all tasks pass; push to GitHub → the `CI` workflow runs the same checks against a Postgres 18 service and goes green; break a test → the run fails → AC-6
 
 ## Acceptance-criteria coverage
 - AC-1 … steps 1, 2 · AC-2 … steps 5, 6, 7 · AC-3 … step 8 · AC-4 … step 9 · AC-5 … step 10 · AC-6 … step 11 · AC-7 … step 4 · AC-8 … step 3

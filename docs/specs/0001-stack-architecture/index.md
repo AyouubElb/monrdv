@@ -1,7 +1,7 @@
 # 0001. Stack and architecture for the multi tenant booking platform
 
 **Date**: 2026-10-31
-**Status**: In Progress
+**Status**: Accepted
 
 ## Summary
 
@@ -41,7 +41,7 @@ Reasoning, options, landscape scan, and sources: see [rationale.md](rationale.md
 
 | Layer | Choice | Reason |
 |---|---|---|
-| Architecture | Two apps and a shared package in one repo, flat at the root: `web/` (Next.js), `api/` (NestJS, layered controller → service → repository), `shared/` | You want a real API layer to show; one repo keeps one CI pipeline and shared rule values; no extra container folders |
+| Architecture | Two apps and a shared package in one repo, flat at the root: `web/` (Next.js), `api/` (NestJS, controller → service, Prisma inside `TenantDb.forBusiness`; amended by [0002](../0002-tenant-isolation-subdomain-routing/index.md)), `shared/` | You want a real API layer to show; one repo keeps one CI pipeline and shared rule values; no extra container folders |
 | Language | TypeScript, `strict` everywhere | One language across web, API, and shared code |
 | Runtime | Node.js 24 LTS; time zone data must be `2026c` or newer (your machine: 24.21.0, `2026c`) | Supported by every chosen library; `2026c` carries Morocco's 20 September 2026 return to GMT |
 | Package manager and monorepo | pnpm workspaces (listing `web`, `api`, `shared`) + Turborepo | Runs lint, typecheck, test, build across the workspaces in order, with caching |
@@ -98,7 +98,7 @@ turbo.json           task pipeline: lint, typecheck, test, build
 - Next.js server code calls the API over the private Docker network (`API_INTERNAL_URL`), forwarding the visitor's cookies and the original host in `X-Forwarded-Host`. NestJS trusts forwarded headers only from the proxy and internal network (`TRUSTED_PROXY`).
 - Authorization is always decided in NestJS. The Next.js routing layer may redirect early for user experience, never to protect data.
 - Local development mirrors this: `compose.dev.yml` runs Postgres, `db-test`, and Nginx on port 80, which proxies to `pnpm dev` processes on the host (web on 3000, API on 3001). Browse `http://atlas.localhost`.
-- How the API turns a host into a business, and how each query is locked to it (row level security, `SET LOCAL` per request), is decided in the spec for scope feature 2 (tenant isolation).
+- How the API turns a host into a business, and how each query is locked to it (row level security, `SET LOCAL` per request), is decided in [spec 0002](../0002-tenant-isolation-subdomain-routing/index.md).
 
 ### Auth design
 
@@ -151,7 +151,7 @@ turbo.json           task pipeline: lint, typecheck, test, build
 | Area | Rule |
 |---|---|
 | Roles | `app_migrator` owns the schema and runs `prisma migrate deploy` (`MIGRATE_DATABASE_URL`). `app_user` is the runtime role (`DATABASE_URL`): not a superuser, owns nothing, `NOBYPASSRLS`, gets table rights through default privileges. Created by an init script in `infra/postgres/init/` |
-| Tenant setting | Each request runs in a transaction that sets the current business with `SET LOCAL` (mechanism detailed in the spec for scope feature 2) |
+| Tenant setting | Each request runs in a transaction that sets the current business with `SET LOCAL` (mechanism in [spec 0002](../0002-tenant-isolation-subdomain-routing/index.md)) |
 | IDs | `uuid` primary keys defaulting to `uuidv7()`; a short public booking code (like `ATL-7K3Q`) for humans |
 | Time | `timestamptz` for moments; `time` + weekday for opening hours; `date` for days off; each business has a `timezone` column |
 | Money | Integer centimes (120 MAD → `12000`) |
@@ -218,7 +218,7 @@ turbo.json           task pipeline: lint, typecheck, test, build
 
 ## Follow-up
 
-- [ ] Spec for scope feature 2 (tenant isolation): host to business resolution, trusted forwarded host, row level security policies, `SET LOCAL` per request with Prisma, cross tenant tests.
+- [x] Spec for scope feature 2 (tenant isolation): host to business resolution, trusted forwarded host, row level security policies, `SET LOCAL` per request with Prisma, cross tenant tests. Done in [spec 0002](../0002-tenant-isolation-subdomain-routing/index.md).
 - [ ] Spec for scope feature 3 (data model): includes `users` and `refresh_tokens` as used by the Auth design above.
 - [ ] Create the Oracle Cloud account and check free A1 capacity in your region on day 1; fall back to the AWS free plan if none.
 - [ ] Buy a domain and move its DNS to Cloudflare before scope feature 7.

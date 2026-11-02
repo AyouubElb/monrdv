@@ -1,5 +1,6 @@
-// Models arrive with the data model feature (scope feature 3).
 // Row level security, constraints, extensions, and roles go in handwritten SQL migrations.
+// Every business owned table follows the tenant table rule (spec 0002): `business_id`,
+// `@@unique([businessId, id])`, links that carry `businessId`, and the `tenant_isolation` policy.
 
 generator client {
   provider            = "prisma-client"
@@ -10,4 +11,16 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+/// One salon, clinic, or coach. Row level security shows only the current business (`business_self`).
+model Business {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  /// Fixed at signup: a trigger refuses any change.
+  subdomain String   @unique
+  name      String
+  timezone  String   @default("Africa/Casablanca")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("businesses")
 }

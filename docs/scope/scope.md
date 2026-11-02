@@ -11,9 +11,9 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 
 | # | Feature | Phase | Status |
 |---|---------|-------|--------|
-| 1 | Stack & architecture | Foundation | in-progress |
-| 2 | Tenant isolation & subdomain routing | Foundation | planned |
-| 3 | Data model | Foundation | planned |
+| 1 | Stack & architecture | Foundation | done |
+| 2 | Tenant isolation & subdomain routing | Foundation | done |
+| 3 | Data model | Foundation | in-progress |
 | 4 | Design system & UI foundation | Foundation | planned |
 | 5 | Business signup & owner sign in | Slice 1 | planned |
 | 6 | First booking loop | Slice 1 | planned |
@@ -28,24 +28,37 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 
 ## Foundations
 
-### 1. Stack & architecture · in-progress
+### 1. Stack & architecture · done
 Decide the stack and scaffold a runnable project, including lint, format, typecheck, and the CI pipeline, since every later slice builds on it and CI gates every commit (basis: foundations before features).
 **Done when:** the stack is recorded in a spec (hosting with wildcard subdomains and HTTPS, auth, database, file storage for logos); the scaffold boots locally on subdomains like `atlas.localhost`; lint, typecheck, and tests run green in CI on every push.
 - [x] Decide the stack (spec): `/architect stack & architecture`
 - [x] Scaffold from the decision: `/develop stack & architecture`
-- [ ] Verify it: `/check verify stack & architecture`
+- [x] Verify it: `/check verify stack & architecture`
 - [x] Test it: `/test stack & architecture`
 Spec [0001](../specs/0001-stack-architecture/index.md) · code in `web/`, `api/`, `shared/`, `infra/`, `.github/workflows/ci.yml`
 
-### 2. Tenant isolation & subdomain routing · needs a decision
+### 2. Tenant isolation & subdomain routing · done
 How every request finds its business from the subdomain, and how every read and write is forced to stay inside that business. This is the part agencies usually get wrong, so it is proven by tests, not promised (basis: OWASP Multi Tenant Security cheat sheet; OWASP Top 10 A01 Broken Access Control).
 **Done when:** `atlas.` and `anfa.` resolve to different businesses; an unknown subdomain shows a clean "not found" page; reserved names (`www`, `admin`, `api`, …) are refused; a session from one business never works on another (host only cookies, no parent `Domain`); automated tests prove no business can read or change another's data.
-- [ ] Design it (spec): `/architect tenant isolation & subdomain routing`
+- [x] Design it (spec): `/architect tenant isolation & subdomain routing`
+- [x] Build it: `/develop tenant isolation & subdomain routing`
+  - [x] Thin thread: shared host rules, `businesses` migration with its database locks, host guard, `GET /api/tenant`, Next.js proxy and pages; `atlas.` and `anfa.` show their own names, `pizzeria.` answers 404 (AC-1, AC-2, AC-3, AC-5, AC-6, AC-12, AC-14)
+  - [x] Edges: Nginx `www` redirect and foreign host drop; request logs carry the business (AC-4, AC-13)
+  - [x] Session check: `AuthGuard` refuses a token from another business, with a test token helper (AC-7)
+  - [x] Proof harness: probe tables, catalog test, lint guard on `PrismaService` (AC-8, AC-9, AC-10, AC-11)
+- [x] Verify it: `/check verify tenant isolation & subdomain routing`
+Spec [0002](../specs/0002-tenant-isolation-subdomain-routing/index.md) · code in `shared/src/subdomain.ts`, `api/src/tenancy/`, `api/src/auth/`, `api/src/tenant/`, `api/prisma/migrations/`, `api/test/`, `web/proxy.ts`, `web/lib/`, `web/app/sites/`, `web/app/site-introuvable/`, `infra/nginx/dev.conf`
 
-### 3. Data model · needs a decision · Alpha
+### 3. Data model · in-progress · Alpha
 Core entities every slice builds on: businesses, owner, staff, services, who does which service, weekly hours, time off and closures, bookings, cash payments (basis: the data model is the costliest thing to redo).
 **Done when:** one model fits salon, clinic, and coach; staff hours allow several ranges a day; prices are in MAD; times are stored so a legal time change never shifts an existing booking; group sessions and online payment can be added later without a breaking migration.
-- [ ] Design it (spec): `/architect data model`
+- [x] Design it (spec): `/architect data model`
+- [ ] Build it: `/develop data model`
+  - [ ] Schema and migration: nine Prisma models plus the handwritten SQL (checks, double booking and hours guards, payments trigger, delete revokes, row level security, UTC sessions), applied with no drift, catalog test green (AC-1, AC-2, AC-4, AC-5, AC-7 to AC-13, AC-15, AC-16)
+  - [ ] Wall clock helpers in `shared/` (AC-6)
+  - [ ] Dev seed with Salon Atlas, Clinique Anfa, and Coach Karim (AC-3, AC-14)
+- [ ] Verify it: `/check verify data model`
+Spec [0003](../specs/0003-data-model/index.md)
 
 ### 4. Design system & UI foundation · needs a decision · Alpha
 French visual language, layout, and base components, with one accent color per business so branding needs no new styles (basis: every page depends on it).

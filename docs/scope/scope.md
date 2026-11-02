@@ -14,7 +14,7 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | 1 | Stack & architecture | Foundation | done |
 | 2 | Tenant isolation & subdomain routing | Foundation | done |
 | 3 | Data model | Foundation | in-progress |
-| 4 | Design system & UI foundation | Foundation | planned |
+| 4 | Design system & UI foundation | Foundation | in-progress |
 | 5 | Business signup & owner sign in | Slice 1 | planned |
 | 6 | First booking loop | Slice 1 | planned |
 | 7 | Live deployment | Slice 2 | planned |
@@ -53,17 +53,24 @@ Spec [0002](../specs/0002-tenant-isolation-subdomain-routing/index.md) · code i
 Core entities every slice builds on: businesses, owner, staff, services, who does which service, weekly hours, time off and closures, bookings, cash payments (basis: the data model is the costliest thing to redo).
 **Done when:** one model fits salon, clinic, and coach; staff hours allow several ranges a day; prices are in MAD; times are stored so a legal time change never shifts an existing booking; group sessions and online payment can be added later without a breaking migration.
 - [x] Design it (spec): `/architect data model`
-- [ ] Build it: `/develop data model`
-  - [ ] Schema and migration: nine Prisma models plus the handwritten SQL (checks, double booking and hours guards, payments trigger, delete revokes, row level security, UTC sessions), applied with no drift, catalog test green (AC-1, AC-2, AC-4, AC-5, AC-7 to AC-13, AC-15, AC-16)
-  - [ ] Wall clock helpers in `shared/` (AC-6)
-  - [ ] Dev seed with Salon Atlas, Clinique Anfa, and Coach Karim (AC-3, AC-14)
-- [ ] Verify it: `/check verify data model`
-Spec [0003](../specs/0003-data-model/index.md)
+- [x] Build it: `/develop data model`
+  - [x] Schema and migration: nine Prisma models plus the handwritten SQL (checks, double booking and hours guards, payments trigger, delete revokes, row level security, UTC sessions), applied with no drift, catalog test green (AC-1, AC-2, AC-4, AC-5, AC-7 to AC-13, AC-15, AC-16)
+  - [x] Wall clock helpers in `shared/` (AC-6)
+  - [x] Dev seed with Salon Atlas, Clinique Anfa, and Coach Karim (AC-3, AC-14)
+- [x] Verify it: `/check verify data model`
+Spec [0003](../specs/0003-data-model/index.md) · code in `api/prisma/schema.prisma`, `api/prisma/migrations/20261102172612_data_model/`, `api/prisma/dev-seed.sql`, `api/test/db.ts`, `shared/src/wall-clock.ts`
 
-### 4. Design system & UI foundation · needs a decision · Alpha
+### 4. Design system & UI foundation · in-progress · Alpha
 French visual language, layout, and base components, with one accent color per business so branding needs no new styles (basis: every page depends on it).
 **Done when:** `design.md` covers type, color, spacing, and components; one accent token swaps the brand color per business; the booking page is designed for phones first; base components work by keyboard and meet WCAG 2.2 AA contrast.
-- [ ] Design it (spec): `/architect design system & UI foundation`
+- [x] Design it (spec): `/architect design system & UI foundation`
+- [ ] Build it: `/develop design system & UI foundation`
+  - [ ] Thin thread: shadcn setup (Radix, maia, Lucide), tokens and IBM Plex Sans, palette module with its contrast test, `accentColor` through the API and seed, business layout sets the color; `atlas.` terracotta, `anfa.` petrol, `karim.` olive (AC-1, AC-3, AC-4, AC-5, AC-6)
+  - [ ] Base components themed, with status badges, and the public `/design` gallery with the swatch switcher (AC-7, AC-11)
+  - [ ] Booking patterns, brand marks, three shells, display formats; placeholder pages moved onto the shells (AC-8, AC-9, AC-10, AC-12, AC-14, AC-15)
+  - [ ] `web/design.md` and the accessibility pass: `web-design-guidelines` review, keyboard, 360px, reduced motion (AC-2, AC-13, AC-16)
+- [ ] Verify it: `/check verify design system & UI foundation`
+Spec [0004](../specs/0004-design-system-ui-foundation/index.md)
 
 ## Slice 1: First booking, end to end
 

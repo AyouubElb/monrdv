@@ -11,3 +11,9 @@ export {
   parseHost,
   type ParsedHost,
 } from './subdomain.js';
+export {
+  formatWallClock,
+  instantToWallClock,
+  parseWallClock,
+  wallClockToInstant,
+} from './wall-clock.js';

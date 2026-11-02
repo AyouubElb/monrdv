@@ -1,5 +1,8 @@
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../src/generated/prisma/client.js';
+import {
+  type BusinessKind,
+  PrismaClient,
+} from '../src/generated/prisma/client.js';
 import { testDatabaseEnv } from './test-env.js';
 
 /**
@@ -23,9 +26,10 @@ export async function createBusiness(
   migrator: PrismaClient,
   subdomain: string,
   name: string,
+  kind: BusinessKind = 'salon',
 ): Promise<string> {
   const business = await migrator.business.create({
-    data: { subdomain, name },
+    data: { subdomain, name, kind },
     select: { id: true },
   });
   return business.id;

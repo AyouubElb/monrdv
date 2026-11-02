@@ -1,7 +1,7 @@
 # 0003. Data model
 
 **Date**: 2026-11-02
-**Status**: Proposed
+**Status**: In Progress
 
 ## Summary
 

@@ -26,8 +26,8 @@ DECLARE
   paid_booking uuid;
 BEGIN
   -- Salon Atlas: two hairdressers with different weeks, a vacation, and a closure.
-  INSERT INTO businesses (subdomain, name, kind, phone)
-  VALUES ('atlas', 'Salon Atlas', 'salon', '+212522000001')
+  INSERT INTO businesses (subdomain, name, kind, phone, accent_color)
+  VALUES ('atlas', 'Salon Atlas', 'salon', '+212522000001', '#ab4a28')
   RETURNING id INTO atlas;
 
   INSERT INTO staff (business_id, name) VALUES (atlas, 'Samira') RETURNING id INTO samira;
@@ -82,8 +82,8 @@ BEGIN
      'Omar Tazi', '+212700112233', 'omar.tazi@example.ma', now());
 
   -- Clinique Anfa: one doctor with two ranges a day.
-  INSERT INTO businesses (subdomain, name, kind, phone)
-  VALUES ('anfa', 'Clinique Anfa', 'clinic', '+212522000002')
+  INSERT INTO businesses (subdomain, name, kind, phone, accent_color)
+  VALUES ('anfa', 'Clinique Anfa', 'clinic', '+212522000002', '#0f6e6e')
   RETURNING id INTO anfa;
 
   INSERT INTO staff (business_id, name) VALUES (anfa, 'Dr Amina Alaoui') RETURNING id INTO doctor;
@@ -102,7 +102,7 @@ BEGIN
           next_monday + 2 + time '09:30', next_monday + 2 + time '10:00',
           'Youssef Chraibi', '+212650998877', 'y.chraibi@example.ma', now());
 
-  -- Coach Karim: one person, two evenings a week.
+  -- Coach Karim: one person, two evenings a week. No accent color, so the page shows the default olive.
   INSERT INTO businesses (subdomain, name, kind)
   VALUES ('karim', 'Coach Karim', 'coach')
   RETURNING id INTO karim;

@@ -1,18 +1,210 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
-/* Placeholder tokens; the design system feature (scope feature 4) defines the real ones. */
+/* Light only (spec 0004). No element ever gets the `dark` class, so the `dark:` classes inside
+   the shadcn components never apply. Without this line Tailwind would tie them to the
+   system dark mode. */
+@custom-variant dark (&:is(.dark *));
+
+/* Lets the `/design` gallery pin hover, focus, and pressed states side by side with
+   `data-preview="hover"` (or `focus`, `active`). Real interaction works as usual. */
+@custom-variant hover {
+  @media (hover: hover) {
+    &:hover {
+      @slot;
+    }
+  }
+  &[data-preview~='hover'] {
+    @slot;
+  }
+}
+@custom-variant focus-visible (&:focus-visible, &[data-preview~='focus']);
+@custom-variant active (&:active, &[data-preview~='active']);
+
+/* The only place colors are defined (spec 0004, Tokens). Components use the token classes
+   (`bg-primary`, `text-muted-foreground`), never raw palette classes or hex values. A business
+   page overrides `--primary` alone, with a palette constant (`app/sites/[subdomain]/layout.tsx`). */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f4f1ea;
+  --foreground: #2b2a24;
+  --card: #ffffff;
+  --card-foreground: #2b2a24;
+  --popover: #ffffff;
+  --popover-foreground: #2b2a24;
+
+  --primary: #5c6a24;
+  --primary-foreground: #ffffff;
+  /* Hover darkens the accent, so white text only gains contrast. */
+  --primary-hover: color-mix(in oklab, var(--primary) 85%, black);
+  --primary-soft: color-mix(in oklab, var(--primary) 12%, white);
+  --ring: var(--primary);
+
+  --secondary: #ebe5d8;
+  --secondary-foreground: #2b2a24;
+  --muted: #ebe5d8;
+  --muted-foreground: #6b6358;
+  /* Ghost hover and menu highlight: the sand surface, carrying ink only. */
+  --accent: #ebe5d8;
+  --accent-foreground: #2b2a24;
+
+  --border: #e3ddd0;
+  --input: #8c8374;
+  --destructive: #b42318;
+
+  /* Root domain only, fill only, ink text only. */
+  --highlight: #dca487;
+  --highlight-foreground: #2b2a24;
+
+  /* Booking status colors: fixed, never the accent, so "Confirmé" reads the same everywhere. */
+  --status-confirmed: #1a6b43;
+  --status-confirmed-soft: #e4efea;
+  --status-done: #3f4a5a;
+  --status-done-soft: #e8e9eb;
+  --status-noshow: #8a4f00;
+  --status-noshow-soft: #f4ebe0;
+  --status-cancelled: #b42318;
+  --status-cancelled-soft: #f6e5e3;
+
+  /* Control radius, also read by Sonner. Cards use `--radius-xl`. */
+  --radius: 12px;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-ring: var(--ring);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-destructive: var(--destructive);
+  --color-highlight: var(--highlight);
+  --color-highlight-foreground: var(--highlight-foreground);
+  --color-status-confirmed: var(--status-confirmed);
+  --color-status-confirmed-soft: var(--status-confirmed-soft);
+  --color-status-done: var(--status-done);
+  --color-status-done-soft: var(--status-done-soft);
+  --color-status-noshow: var(--status-noshow);
+  --color-status-noshow-soft: var(--status-noshow-soft);
+  --color-status-cancelled: var(--status-cancelled);
+  --color-status-cancelled-soft: var(--status-cancelled-soft);
+
+  /* IBM Plex Sans, loaded by `next/font` in `app/layout.tsx` as `--font-plex`. */
+  --font-sans:
+    var(--font-plex), ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+    sans-serif;
+  --font-heading: var(--font-sans);
+
+  /* Controls 12px, cards 16px, badges and chips fully round. */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: var(--radius);
+  --radius-xl: 16px;
+  --radius-2xl: 16px;
+  --radius-3xl: 20px;
+  --radius-4xl: 9999px;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: system-ui, sans-serif;
+/* Hairline borders first; one soft shadow for popovers, sheets, and the sticky bar only. */
+@theme {
+  --shadow-xs: 0 0 #0000;
+  --shadow-sm: 0 0 #0000;
+  --shadow-md: 0 8px 24px rgb(43 42 36 / 0.1), 0 1px 3px rgb(43 42 36 / 0.06);
+  --shadow-lg: 0 8px 24px rgb(43 42 36 / 0.1), 0 1px 3px rgb(43 42 36 / 0.06);
+  --shadow-xl: 0 8px 24px rgb(43 42 36 / 0.1), 0 1px 3px rgb(43 42 36 / 0.06);
+  --shadow-2xl: 0 8px 24px rgb(43 42 36 / 0.1), 0 1px 3px rgb(43 42 36 / 0.06);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-semibold text-balance;
+  }
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+  /* No double tap zoom delay on controls. The tap flash is off because every control has its
+     own hover and pressed colors. */
+  a,
+  button,
+  [role='button'],
+  input,
+  label,
+  select,
+  textarea {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Keep the focused control out from under fixed bars when the page scrolls to it: the booking
+   action bar at the bottom, the `/design` header at the top on wide screens. */
+html:has([data-sticky-action-bar]) {
+  scroll-padding-bottom: 10rem;
+}
+@media (width >= 64rem) {
+  html:has([data-gallery-header]) {
+    scroll-padding-top: 9rem;
+  }
+}
+
+/* Focus ring: 2px in the accent with a 2px offset, on every control (spec 0004). Unlayered so it
+   beats the `outline-none` inside the components; the ring shadow they add is cancelled. */
+:is(
+  a[href],
+  button,
+  input,
+  textarea,
+  select,
+  summary,
+  [tabindex],
+  [role='button'],
+  [role='checkbox'],
+  [role='radio'],
+  [role='switch'],
+  [role='tab'],
+  [role='combobox'],
+  [role='menuitem'],
+  [role='option']
+):is(:focus-visible, [data-preview~='focus']) {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+/* Motion is only short color and opacity transitions, and stops when the visitor asks. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

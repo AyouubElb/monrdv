@@ -14,7 +14,7 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | 1 | Stack & architecture | Foundation | done |
 | 2 | Tenant isolation & subdomain routing | Foundation | done |
 | 3 | Data model | Foundation | in-progress |
-| 4 | Design system & UI foundation | Foundation | in-progress |
+| 4 | Design system & UI foundation | Foundation | done |
 | 5 | Business signup & owner sign in | Slice 1 | planned |
 | 6 | First booking loop | Slice 1 | planned |
 | 7 | Live deployment | Slice 2 | planned |
@@ -60,17 +60,17 @@ Core entities every slice builds on: businesses, owner, staff, services, who doe
 - [x] Verify it: `/check verify data model`
 Spec [0003](../specs/0003-data-model/index.md) · code in `api/prisma/schema.prisma`, `api/prisma/migrations/20261102172612_data_model/`, `api/prisma/dev-seed.sql`, `api/test/db.ts`, `shared/src/wall-clock.ts`
 
-### 4. Design system & UI foundation · in-progress · Alpha
+### 4. Design system & UI foundation · done · Alpha
 French visual language, layout, and base components, with one accent color per business so branding needs no new styles (basis: every page depends on it).
 **Done when:** `design.md` covers type, color, spacing, and components; one accent token swaps the brand color per business; the booking page is designed for phones first; base components work by keyboard and meet WCAG 2.2 AA contrast.
 - [x] Design it (spec): `/architect design system & UI foundation`
-- [ ] Build it: `/develop design system & UI foundation`
-  - [ ] Thin thread: shadcn setup (Radix, maia, Lucide), tokens and IBM Plex Sans, palette module with its contrast test, `accentColor` through the API and seed, business layout sets the color; `atlas.` terracotta, `anfa.` petrol, `karim.` olive (AC-1, AC-3, AC-4, AC-5, AC-6)
-  - [ ] Base components themed, with status badges, and the public `/design` gallery with the swatch switcher (AC-7, AC-11)
-  - [ ] Booking patterns, brand marks, three shells, display formats; placeholder pages moved onto the shells (AC-8, AC-9, AC-10, AC-12, AC-14, AC-15)
-  - [ ] `web/design.md` and the accessibility pass: `web-design-guidelines` review, keyboard, 360px, reduced motion (AC-2, AC-13, AC-16)
-- [ ] Verify it: `/check verify design system & UI foundation`
-Spec [0004](../specs/0004-design-system-ui-foundation/index.md)
+- [x] Build it: `/develop design system & UI foundation`
+  - [x] Thin thread: shadcn setup (Radix, maia, Lucide), tokens and IBM Plex Sans, palette module with its contrast test, `accentColor` through the API and seed, business layout sets the color; `atlas.` terracotta, `anfa.` petrol, `karim.` olive (AC-1, AC-3, AC-4, AC-5, AC-6)
+  - [x] Base components themed, with status badges, and the public `/design` gallery with the swatch switcher (AC-7, AC-11)
+  - [x] Booking patterns, brand marks, three shells, display formats; placeholder pages moved onto the shells (AC-8, AC-9, AC-10, AC-12, AC-14, AC-15)
+  - [x] `web/design.md` and the accessibility pass: `web-design-guidelines` review, keyboard, 360px, reduced motion (AC-2, AC-13, AC-16)
+- [x] Verify it: `/check verify design system & UI foundation`
+Spec [0004](../specs/0004-design-system-ui-foundation/index.md) · code in `web/app/globals.css`, `web/design.md`, `web/components/`, `web/app/design/`, `web/app/sites/[subdomain]/layout.tsx`, `web/lib/dashboard-nav.ts`, `shared/src/palette.ts`, `shared/src/format.ts`
 
 ## Slice 1: First booking, end to end
 

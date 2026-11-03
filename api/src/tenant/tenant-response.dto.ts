@@ -9,4 +9,7 @@ export class TenantResponseDto implements TenantInfo {
 
   /** IANA time zone of the business. @example "Africa/Casablanca" */
   timezone: string;
+
+  /** Business color as `#rrggbb`, or null for the default. @example "#ab4a28" */
+  accentColor: string | null;
 }

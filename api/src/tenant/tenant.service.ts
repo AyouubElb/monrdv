@@ -11,7 +11,12 @@ export class TenantService {
     return this.tenantDb.forBusiness(businessId, (tx) =>
       tx.business.findUniqueOrThrow({
         where: { id: businessId },
-        select: { subdomain: true, name: true, timezone: true },
+        select: {
+          subdomain: true,
+          name: true,
+          timezone: true,
+          accentColor: true,
+        },
       }),
     );
   }

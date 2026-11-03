@@ -3,6 +3,8 @@ export interface TenantInfo {
   subdomain: string;
   name: string;
   timezone: string;
+  /** `#rrggbb` as stored, or `null`. Pass it through `paletteColorOrDefault` before display. */
+  accentColor: string | null;
 }
 
 /** Every API error body. `message` is French, from `messages`. */

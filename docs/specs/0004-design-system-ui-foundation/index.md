@@ -1,7 +1,7 @@
 # 0004. Design system and UI foundation
 
 **Date**: 2026-11-02
-**Status**: Proposed
+**Status**: Accepted
 
 ## Summary
 

@@ -15,7 +15,7 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | 2 | Tenant isolation & subdomain routing | Foundation | done |
 | 3 | Data model | Foundation | in-progress |
 | 4 | Design system & UI foundation | Foundation | done |
-| 5 | Business signup & owner sign in | Slice 1 | planned |
+| 5 | Business signup & owner sign in | Slice 1 | in-progress |
 | 6 | First booking loop | Slice 1 | planned |
 | 7 | Live deployment | Slice 2 | planned |
 | 8 | Staff & schedules | Slice 3 | planned |
@@ -74,10 +74,18 @@ Spec [0004](../specs/0004-design-system-ui-foundation/index.md) · code in `web/
 
 ## Slice 1: First booking, end to end
 
-### 5. Business signup & owner sign in
+### 5. Business signup & owner sign in · in-progress
 On the platform's root domain, an owner creates a business (name, type, subdomain), becomes its first staff member, and lands in their dashboard. Leans on the stack and tenant isolation specs (basis: OWASP Authentication and Password Storage cheat sheets; OWASP API4 for rate limits).
 **Done when:** a new subdomain works immediately with no manual step; taken or reserved subdomains are refused with a clear message; signup is rate limited; the owner signs in only on their own subdomain.
+- [x] Design it (spec): `/architect business signup & owner sign in`
 - [ ] Build it: `/develop business signup & owner sign in`
+  - [ ] Thin thread: shared rules (subdomain suggestion, password rules, setting choices), `POST /api/signup`, login and `me`, two step `/inscription`, `/connexion`, guarded `/tableau-de-bord` welcome (AC-1, AC-2, AC-4, AC-5, AC-6, AC-7, AC-9, AC-10, AC-11)
+  - [ ] Session lifecycle: refresh with rotation, grace, and theft revocation; cleanup as you go; logout and `sid` block list; proxy refresh and browser retry (AC-11, AC-12, AC-13, AC-14, AC-15)
+  - [ ] Abuse guards: Origin check, rate limits, subdomain availability check on step 1 (AC-3, AC-6, AC-8, AC-16)
+  - [ ] Finish: dev seed owners, "Espace pro" link, `noindex`, form copy lines, accessibility pass (AC-9, AC-17, AC-18, AC-19)
+- [ ] Verify it: `/check verify business signup & owner sign in`
+- [ ] Test it: `/test business signup & owner sign in`
+Spec [0005](../specs/0005-business-signup-owner-sign-in/index.md) · code in `shared/src/`, `api/src/signup/`, `api/src/auth/`, `api/src/app.setup.ts`, `api/prisma/dev-seed.sql`, `web/app/inscription/`, `web/app/sites/[subdomain]/connexion/`, `web/app/sites/[subdomain]/tableau-de-bord/`, `web/components/shells/`, `web/lib/api/`, `web/proxy.ts`
 
 ### 6. First booking loop
 The thinnest real thread: the owner adds one service and business hours; a guest picks a service, a day, and an open slot, leaves name, phone, and email, and gets a confirmation page with a booking reference; the owner sees it in a simple list (basis: CNDP deliberation D-941-2025 and website compliance guidance).

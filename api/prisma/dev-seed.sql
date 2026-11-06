@@ -1,5 +1,6 @@
 -- Three businesses for local development, one per kind, so `atlas.localhost`, `anfa.localhost`,
 -- and `karim.localhost` resolve with staff, hours, services, time off, and bookings.
+-- Each business has one owner who signs in with the password `Dev-Owner-2026!` on its own subdomain.
 -- Runs as app_migrator (the table owner, so row level security does not apply).
 -- Safe to run again: deleting the three businesses cascades through every table.
 -- The demo data feature (scope feature 14) replaces it.
@@ -11,6 +12,9 @@ DECLARE
   this_monday date := date_trunc('week', now() AT TIME ZONE 'Africa/Casablanca')::date;
   next_monday date := this_monday + 7;
   last_thursday date := this_monday - 4;
+  -- argon2id of `Dev-Owner-2026!` with the spec 0001 parameters, computed once.
+  owner_hash text := '$argon2id$v=19$m=19456,p=1,t=2$LfoVFdSz8pXjaU4cN4VuYA$YReGrm/mypAisQkrFu5R3JYByZpPiIgJhpHKiSmYdSY';
+  owner_user uuid;
   atlas uuid;
   anfa uuid;
   karim uuid;
@@ -30,7 +34,9 @@ BEGIN
   VALUES ('atlas', 'Salon Atlas', 'salon', '+212522000001', '#ab4a28')
   RETURNING id INTO atlas;
 
-  INSERT INTO staff (business_id, name) VALUES (atlas, 'Samira') RETURNING id INTO samira;
+  INSERT INTO users (business_id, email, password_hash)
+  VALUES (atlas, 'samira@atlas.test', owner_hash) RETURNING id INTO owner_user;
+  INSERT INTO staff (business_id, name, user_id) VALUES (atlas, 'Samira', owner_user) RETURNING id INTO samira;
   INSERT INTO staff (business_id, name) VALUES (atlas, 'Youssef') RETURNING id INTO youssef;
 
   INSERT INTO services (business_id, name, duration_minutes, price_centimes)
@@ -86,7 +92,10 @@ BEGIN
   VALUES ('anfa', 'Clinique Anfa', 'clinic', '+212522000002', '#0f6e6e')
   RETURNING id INTO anfa;
 
-  INSERT INTO staff (business_id, name) VALUES (anfa, 'Dr Amina Alaoui') RETURNING id INTO doctor;
+  INSERT INTO users (business_id, email, password_hash)
+  VALUES (anfa, 'amina@anfa.test', owner_hash) RETURNING id INTO owner_user;
+  INSERT INTO staff (business_id, name, user_id)
+  VALUES (anfa, 'Dr Amina Alaoui', owner_user) RETURNING id INTO doctor;
   INSERT INTO services (business_id, name, duration_minutes, price_centimes)
   VALUES (anfa, 'Consultation', 30, 30000) RETURNING id INTO consultation;
   INSERT INTO staff_services (business_id, staff_id, service_id) VALUES (anfa, doctor, consultation);
@@ -107,7 +116,9 @@ BEGIN
   VALUES ('karim', 'Coach Karim', 'coach')
   RETURNING id INTO karim;
 
-  INSERT INTO staff (business_id, name) VALUES (karim, 'Karim') RETURNING id INTO coach;
+  INSERT INTO users (business_id, email, password_hash)
+  VALUES (karim, 'karim@karim.test', owner_hash) RETURNING id INTO owner_user;
+  INSERT INTO staff (business_id, name, user_id) VALUES (karim, 'Karim', owner_user) RETURNING id INTO coach;
   INSERT INTO services (business_id, name, duration_minutes, price_centimes)
   VALUES (karim, 'Séance de coaching', 60, 25000) RETURNING id INTO seance;
   INSERT INTO staff_services (business_id, staff_id, service_id) VALUES (karim, coach, seance);

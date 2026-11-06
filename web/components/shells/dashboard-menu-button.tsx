@@ -19,9 +19,11 @@ import {
 export function DashboardMenuButton({
   businessName,
   children,
+  footer,
 }: {
   businessName: string;
   children: ReactNode;
+  footer?: ReactNode;
 }) {
   return (
     <Sheet>
@@ -43,6 +45,7 @@ export function DashboardMenuButton({
         <nav aria-label="Menu principal" className="px-4">
           {children}
         </nav>
+        {footer && <div className="mt-auto border-t p-4">{footer}</div>}
       </SheetContent>
     </Sheet>
   );

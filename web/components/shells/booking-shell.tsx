@@ -45,11 +45,20 @@ export function BookingShell({
       </Main>
       <footer
         className={cn(
-          'mx-auto w-full max-w-[480px] px-4 pb-6 text-center text-xs text-muted-foreground',
+          'mx-auto flex w-full max-w-[480px] flex-wrap items-center justify-center gap-x-2 gap-y-1 px-4 pb-6 text-xs text-muted-foreground',
           actionBar && 'pb-36',
         )}
       >
-        Réservation en ligne par <span className="font-semibold">MonRDV</span>
+        <p>
+          Réservation en ligne par <span className="font-semibold">MonRDV</span>
+        </p>
+        <span aria-hidden="true">·</span>
+        <a
+          href="/connexion"
+          className="rounded-sm underline-offset-4 hover:text-foreground hover:underline"
+        >
+          Espace pro
+        </a>
       </footer>
       {actionBar}
     </div>

@@ -18,3 +18,21 @@ export const phoneSamples: ReadonlyArray<{ input: string; valid: boolean }> = [
   { input: '+33612345678', valid: false },
   { input: '+212 6 12 34 56 78 00 00 00 00', valid: false },
 ];
+
+// Every password validator must agree on these (AC-7).
+export const passwordSamples: ReadonlyArray<{
+  input: string;
+  valid: boolean;
+}> = [
+  { input: 'Salonatlas1!', valid: true },
+  { input: 'Dev-Owner-2026!', valid: true },
+  { input: 'Éé1 aaaa', valid: true },
+  { input: 'salonatlas1!', valid: false },
+  { input: 'SALONATLAS1!', valid: false },
+  { input: 'Salonatlas!!', valid: false },
+  { input: 'Salonatlas12', valid: false },
+  { input: 'Sa1!', valid: false },
+  { input: `Aa1!${'a'.repeat(124)}`, valid: true },
+  { input: `Aa1!${'a'.repeat(125)}`, valid: false },
+  { input: '', valid: false },
+];

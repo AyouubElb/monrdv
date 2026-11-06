@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { AppModule } from '../src/app.module.js';
 import { configureApp } from '../src/app.setup.js';
-import { PrismaService } from '../src/prisma/prisma.service.js';
+import { PrismaService } from '../src/common/prisma/prisma.service.js';
 import { createTestApp } from './create-app.js';
 
 // covers: AC-2

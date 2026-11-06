@@ -2,20 +2,25 @@ import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
 import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { LoggerModule } from 'nestjs-pino';
-import { AuthGuard } from './auth/auth.guard.js';
-import { AuthModule } from './auth/auth.module.js';
+import { ApiExceptionFilter } from './common/filters/api-exception.filter.js';
+import { validationException } from './common/filters/validation-exception.factory.js';
+import { AuthGuard } from './common/guards/auth.guard.js';
+import { PrismaModule } from './common/prisma/prisma.module.js';
+import { THROTTLERS } from './common/rate-limit/rate-limit.guard.js';
+import { HostGuard } from './common/tenancy/host.guard.js';
+import { TenancyModule } from './common/tenancy/tenancy.module.js';
+import type { TenantRequest } from './common/tenancy/tenant-request.js';
 import {
   validateEnv,
   type EnvironmentVariables,
 } from './config/env.validation.js';
-import { HealthModule } from './health/health.module.js';
-import { PrismaModule } from './prisma/prisma.module.js';
-import { HostGuard } from './tenancy/host.guard.js';
-import { TenancyModule } from './tenancy/tenancy.module.js';
-import type { TenantRequest } from './tenancy/tenant-request.js';
-import { TenantModule } from './tenant/tenant.module.js';
+import { AuthModule } from './modules/auth/auth.module.js';
+import { HealthModule } from './modules/health/health.module.js';
+import { SignupModule } from './modules/signup/signup.module.js';
+import { TenantModule } from './modules/tenant/tenant.module.js';
 
 const REQUEST_ID = /^[\w-]{1,64}$/;
 
@@ -54,11 +59,14 @@ const REQUEST_ID = /^[\w-]{1,64}$/;
         },
       }),
     }),
+    // In memory: a restart empties the counts, and a second instance needs Redis.
+    ThrottlerModule.forRoot(THROTTLERS),
     PrismaModule,
     TenancyModule,
     AuthModule,
     HealthModule,
     TenantModule,
+    SignupModule,
   ],
   providers: [
     // Guards run in this order: the host decides the business, then the session must match it.
@@ -70,8 +78,10 @@ const REQUEST_ID = /^[\w-]{1,64}$/;
         whitelist: true,
         forbidNonWhitelisted: true,
         transform: true,
+        exceptionFactory: validationException,
       }),
     },
+    { provide: APP_FILTER, useClass: ApiExceptionFilter },
   ],
 })
 export class AppModule {}

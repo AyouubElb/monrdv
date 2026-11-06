@@ -1,5 +1,5 @@
 import type { NestExpressApplication } from '@nestjs/platform-express';
-import { PrismaService } from '../src/prisma/prisma.service.js';
+import { PrismaService } from '../src/common/prisma/prisma.service.js';
 import { createTestApp } from './create-app.js';
 
 // The API connects as app_user. Row level security only protects tenants if this role

@@ -80,6 +80,26 @@ export function isValidSubdomain(label: string): boolean {
   );
 }
 
+export function subdomainProblem(label: string): 'invalid' | 'reserved' | null {
+  if (!SUBDOMAIN_PATTERN.test(label) || label.startsWith('xn--')) {
+    return 'invalid';
+  }
+  if (RESERVED_SUBDOMAINS.has(label)) return 'reserved';
+  return null;
+}
+
+// "Café Él Hamra !" → "cafe-el-hamra". May still be too short or reserved.
+export function suggestSubdomain(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, SUBDOMAIN_MAX_LENGTH)
+    .replace(/-+$/, '');
+}
+
 export type ParsedHost =
   | { kind: 'root' }
   | { kind: 'www' }

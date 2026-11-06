@@ -24,37 +24,37 @@ export interface DashboardNavItem {
 export const DASHBOARD_NAV: DashboardNavItem[] = [
   {
     label: 'Agenda',
-    href: '/tableau-de-bord',
+    href: '/dashboard',
     icon: CalendarDays,
     ready: false,
   },
   {
     label: 'Réservations',
-    href: '/tableau-de-bord/reservations',
+    href: '/dashboard/reservations',
     icon: ListChecks,
     ready: false,
   },
   {
     label: 'Prestations',
-    href: '/tableau-de-bord/prestations',
+    href: '/dashboard/prestations',
     icon: LayoutList,
     ready: false,
   },
   {
     label: 'Équipe',
-    href: '/tableau-de-bord/equipe',
+    href: '/dashboard/equipe',
     icon: Users,
     ready: false,
   },
   {
     label: 'Caisse',
-    href: '/tableau-de-bord/caisse',
+    href: '/dashboard/caisse',
     icon: Wallet,
     ready: false,
   },
   {
     label: 'Ma page',
-    href: '/tableau-de-bord/ma-page',
+    href: '/dashboard/ma-page',
     icon: ExternalLink,
     ready: false,
   },

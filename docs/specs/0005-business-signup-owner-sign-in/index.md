@@ -1,7 +1,7 @@
 # 0005. Business signup and owner sign in
 
 **Date**: 2026-11-03
-**Status**: Proposed
+**Status**: Accepted
 
 ## Summary
 
@@ -185,24 +185,24 @@ Validation failures from the global `ValidationPipe` answer 400 `{ statusCode: 4
 Tracer Bullet: first one thin real thread from the signup form to the dashboard, then thicken the session, then the abuse guards, then the finish.
 
 1. **Thin thread: sign up, sign in, see the dashboard.**
-   1. Shared: `suggestSubdomain`, `subdomainProblem`, `PASSWORD_RULES` and `isValidPassword`, length limits, `BOOKING_SETTING_CHOICES`, new messages, `MeResponse`; unit tests for each, satisfies **AC-2**, **AC-7**
-   2. Install `argon2` (API) and `react-hook-form`, `@hookform/resolvers` (web), satisfies **AC-1**, **AC-4**
-   3. `POST /api/signup` with its DTO, the `validation_failed` exception factory, `forNewBusiness` writes, `P2002` → 409, satisfies **AC-4**, **AC-5**, **AC-6**, **AC-7**
-   4. Cookie writer, `POST /api/auth/login` (dummy hash for unknown email, new family, refresh row), `GET /api/auth/me` with the staff first name, satisfies **AC-9**, **AC-10**
-   5. Web `/inscription`: two step `SignupForm` (type cards, settings selects, password checklist, show and hide), success view with the "Me connecter" link, satisfies **AC-1**, **AC-2**, **AC-4**
-   6. Web `/connexion` card with `LoginForm` and email prefill; `getCurrentOwner()`; dashboard layout with the redirect and the welcome page in `DashboardShell`, satisfies **AC-9**, **AC-11**
+   1. [x] Shared: `suggestSubdomain`, `subdomainProblem`, `PASSWORD_RULES` and `isValidPassword`, length limits, `BOOKING_SETTING_CHOICES`, new messages, `MeResponse`; unit tests for each, satisfies **AC-2**, **AC-7**
+   2. [x] Install `argon2` (API) and `react-hook-form`, `@hookform/resolvers` (web), satisfies **AC-1**, **AC-4**
+   3. [x] `POST /api/signup` with its DTO, the `validation_failed` exception factory, `forNewBusiness` writes, `P2002` → 409, satisfies **AC-4**, **AC-5**, **AC-6**, **AC-7**
+   4. [x] Cookie writer, `POST /api/auth/login` (dummy hash for unknown email, new family, refresh row), `GET /api/auth/me` with the staff first name, satisfies **AC-9**, **AC-10**
+   5. [x] Web `/inscription`: two step `SignupForm` (type cards, settings selects, password checklist, show and hide), success view with the "Me connecter" link, satisfies **AC-1**, **AC-2**, **AC-4**
+   6. [x] Web `/connexion` card with `LoginForm` and email prefill; `getCurrentOwner()`; dashboard layout with the redirect and the welcome page in `DashboardShell`, satisfies **AC-9**, **AC-11**
 2. **Session lifecycle.**
-   1. `POST /api/auth/refresh` with conditional rotation, the 20 second grace, and theft revocation; clean as you go on login and refresh, satisfies **AC-13**, **AC-15**
-   2. `sid` block list and its check in `AuthGuard`; `POST /api/auth/logout`; `DashboardShell` footer slot with `LogoutButton`, satisfies **AC-14**
-   3. Proxy refresh for dashboard and `/connexion` paths; `apiFetch` with refresh once and retry; signed in redirect on `/connexion`, satisfies **AC-11**, **AC-12**
+   1. [x] `POST /api/auth/refresh` with conditional rotation, the 20 second grace, and theft revocation; clean as you go on login and refresh, satisfies **AC-13**, **AC-15**
+   2. [x] `sid` block list and its check in `AuthGuard`; `POST /api/auth/logout`; `DashboardShell` footer slot with `LogoutButton`, satisfies **AC-14**
+   3. [x] Proxy refresh for dashboard and `/connexion` paths; `apiFetch` with refresh once and retry; signed in redirect on `/connexion`, satisfies **AC-11**, **AC-12**
 3. **Abuse guards.**
-   1. Origin check middleware in `configureApp`; the proxy and `getCurrentOwner` send `Origin` and `X-Forwarded-For` where needed, satisfies **AC-16**
-   2. `@nestjs/throttler` with the `ip` and `account` limits on signup, check, login, refresh; 429 body and `Retry-After`; the form Alerts, satisfies **AC-8**
-   3. `GET /api/signup/subdomain` and the step 1 early check; 409 on submit returns to step 1, satisfies **AC-3**, **AC-6**
+   1. [x] Origin check middleware in `configureApp`; the proxy and `getCurrentOwner` send `Origin` and `X-Forwarded-For` where needed, satisfies **AC-16**
+   2. [x] `@nestjs/throttler` with the `ip` and `account` limits on signup, check, login, refresh; 429 body and `Retry-After`; the form Alerts, satisfies **AC-8**
+   3. [x] `GET /api/signup/subdomain` and the step 1 early check; 409 on submit returns to step 1, satisfies **AC-3**, **AC-6**
 4. **Finish.**
-   1. Dev seed owners with a precomputed hash, linked to their staff rows, satisfies **AC-18**
-   2. "Espace pro" footer link, `noindex` and titles, the data line on signup, the forgotten password line, satisfies **AC-9**, **AC-17**
-   3. Accessibility pass: focus on errors and step change, spinners and double submit guard, 360px check, `web-design-guidelines` review of the new pages, satisfies **AC-19**
+   1. [x] Dev seed owners with a precomputed hash, linked to their staff rows, satisfies **AC-18**
+   2. [x] "Espace pro" footer link, `noindex` and titles, the data line on signup, the forgotten password line, satisfies **AC-9**, **AC-17**
+   3. [x] Accessibility pass: focus on errors and step change, spinners and double submit guard, 360px check, `web-design-guidelines` review of the new pages, satisfies **AC-19**
 
 ## Consequences
 

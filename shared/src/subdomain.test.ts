@@ -1,5 +1,43 @@
 import { describe, expect, it } from 'vitest';
-import { isValidSubdomain, parseHost } from './subdomain.js';
+import {
+  isValidSubdomain,
+  parseHost,
+  subdomainProblem,
+  suggestSubdomain,
+} from './subdomain.js';
+
+// covers: spec 0005 AC-2
+describe('suggestSubdomain', () => {
+  it.each([
+    ['Salon Atlas', 'salon-atlas'],
+    ['Café Él Hamra !', 'cafe-el-hamra'],
+    ['Clinique Dr. Anfa & Co', 'clinique-dr-anfa-co'],
+    ['  --Zen--  ', 'zen'],
+    ['Ça', 'ca'],
+    ['مرحبا', ''],
+    // Cut to 30, then the hyphen left at the cut is trimmed.
+    ['Institut de beauté des Oudayas Rabat', 'institut-de-beaute-des-oudayas'],
+    ['abcdefghij abcdefghij abcdefgh xyz', 'abcdefghij-abcdefghij-abcdefgh'],
+    ['abcdefghij abcdefghij abcdefg xyz', 'abcdefghij-abcdefghij-abcdefg'],
+  ])('%s → %s', (name, expected) => {
+    expect(suggestSubdomain(name)).toBe(expected);
+  });
+});
+
+describe('subdomainProblem', () => {
+  it.each([
+    ['salon-atlas', null],
+    ['a', 'invalid'],
+    ['-atlas', 'invalid'],
+    ['Atlas', 'invalid'],
+    ['xn--atlas', 'invalid'],
+    ['a'.repeat(31), 'invalid'],
+    ['admin', 'reserved'],
+    ['inscription', 'reserved'],
+  ])('%s → %s', (label, expected) => {
+    expect(subdomainProblem(label)).toBe(expected);
+  });
+});
 
 describe('parseHost', () => {
   it.each([

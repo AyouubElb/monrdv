@@ -2,13 +2,13 @@ import { Controller, Get, Module } from '@nestjs/common';
 import {
   CurrentUser,
   type CurrentUserClaims,
-} from '../src/auth/current-user.decorator.js';
-import { Public } from '../src/auth/public.decorator.js';
-import { CurrentBusiness } from '../src/tenancy/current-business.decorator.js';
+} from '../src/common/decorators/current-user.decorator.js';
+import { Public } from '../src/common/decorators/public.decorator.js';
+import { CurrentBusiness } from '../src/common/tenancy/current-business.decorator.js';
 import {
   AnyHost,
   PlatformRoute,
-} from '../src/tenancy/route-host.decorators.js';
+} from '../src/common/tenancy/route-host.decorators.js';
 
 /**
  * Test only routes, one per route kind, behind the real global guards

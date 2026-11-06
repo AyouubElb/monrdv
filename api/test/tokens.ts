@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { JwtService } from '@nestjs/jwt';
-import { accessCookieName } from '../src/auth/access-token.js';
+import { accessCookieName } from '../src/common/auth/access-token.js';
 
 /** Same value as `JWT_ACCESS_SECRET` in vitest.config.ts. */
 export const TEST_ACCESS_SECRET = 'test-only-access-secret-at-least-32-bytes';
